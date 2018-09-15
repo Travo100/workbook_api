@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
@@ -6,9 +7,12 @@ const jwt = require('jsonwebtoken');
 const exjwt = require('express-jwt');
 const mongoose = require('mongoose');
 const morgan = require('morgan'); // used to see requests
+const AWS = require('aws-sdk');
 const app = express();
 const db = require('./models');
 const PORT = process.env.PORT || 3001;
+
+const s3 = new AWS.S3();
 
 // Setting CORS so that any website can
 // Access our API
@@ -70,18 +74,59 @@ app.get('/api/user/:id', isAuthenticated, (req, res) => {
   }).catch(err => res.status(400).send(err));
 });
 
+
 app.post('/api/submit/code', (req, res) => {
   // when the user submits code
   // this will get it and put it into
   // an html file
+
+
   let fileData = `<!DOCTYPE html><html><head><style>${req.body.css}</style></head><body>${req.body.html}<script>${req.body.js}</script></body></html>`;
   fs.writeFile('uploads/views/index.html', fileData, (err) => {
     if (err) throw err;
-    res.send('The file has been saved!');
+    let convertedFilePath = path.join(__dirname, `/uploads/views/index.html`);
+    fs.readFile(convertedFilePath, function(err, data){
+      if(err) {
+        return res.status(400).send(err);
+      }
+      let params = {
+        Bucket: 'cdn-coding-buddy', /* required */
+        Key: `1234/index.html`, /* required */
+        Body: new Buffer(data)
+      };
+      // do we need to get the file size?
+      //let fileSize = audioFile.size;
+      s3.putObject(params, (err, data) => {
+        if (err)  {
+          return res.status(400).json(err);
+        } else {
+          res.json({
+            message: "File converted and uploaded to S3",
+            s3Data: data
+          });
+        }
+      });
+    });
   });
 });
 
-app.get("/views/:pagename", (req, res) => res.sendFile(path.join(__dirname, 'uploads/views/index.html')));
+app.get('/views/:pagename', (req, res) => {
+  res.sendFile(path.join(__dirname, 'uploads/views/index.html'))
+});
+
+app.get('/api/lesson', (req, res) => {
+  db.Lesson
+    .find({})
+    .then(data => res.json(data))
+    .catch(err => res.status(400).send(err));
+});
+
+app.post('/api/lesson', (req, res) => {
+  db.Lesson
+    .create(req.body)
+    .then(data => res.json(data))
+    .catch(err => res.status(400).send(err));
+});
 
 // Serve up static assets (usually on heroku)
 if (process.env.NODE_ENV === "production") {
