@@ -1,1 +1,259 @@
-<!DOCTYPE html><html><head><style>h1 { color: darkorange; }</style></head><body><h1>I Love coding</h1><script>console.log('Hello World');</script></body></html>
+<!DOCTYPE html><html><head><style></style></head><body><style>
+  body {
+  background: #000;
+}
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+.rim {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  border: 20px solid #000;
+  border-radius: 50%;
+  -webkit-animation: shift-rim 8s infinite;
+          animation: shift-rim 8s infinite;
+  z-index: 10;
+}
+.outer {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(to bottom, #000000 0%, #080847 100%);
+  border: 10px solid #1A23F2;
+  border-radius: 50%;
+  box-sizing: border-box;
+  -webkit-filter: blur(2px);
+          filter: blur(2px);
+  -webkit-animation: shift 8s infinite;
+          animation: shift 8s infinite;
+}
+.outer::before {
+  display: block;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  width: 104%;
+  height: 104%;
+  border: 1px solid #fff;
+  box-sizing: border-box;
+  border-radius: 50%;
+  opacity: 1;
+  -webkit-filter: blur(2px);
+          filter: blur(2px);
+}
+.inner {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(to bottom, #080847 0%, #000000 100%);
+  border: 8px solid #1A23F2;
+  border-radius: 50%;
+  box-sizing: border-box;
+  box-shadow: 0 10px 20px 10px #000;
+  -webkit-filter: blur(1px);
+          filter: blur(1px);
+  -webkit-animation: shift-inner 8s infinite;
+          animation: shift-inner 8s infinite;
+}
+.inner::before {
+  display: block;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  border: 8px solid #000;
+  box-sizing: border-box;
+  border-radius: 50%;
+  opacity: 1;
+  -webkit-filter: blur(5px);
+          filter: blur(5px);
+}
+.inner::after {
+  display: block;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  width: 105%;
+  height: 105%;
+  border: 1px solid #6AAEE9;
+  box-sizing: border-box;
+  border-radius: 50%;
+  opacity: 1;
+  -webkit-filter: blur(3px);
+          filter: blur(3px);
+}
+#clock {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  width: 100%;
+  height: 50px;
+  color: #fff;
+  font-family: 'Baloo Tammudu', cursive;
+  font-size: 40px;
+  text-align: center;
+  text-shadow: 0 0 30px #8DCAED;
+  -webkit-animation: shift-clock 8s infinite;
+          animation: shift-clock 8s infinite;
+}
+@-webkit-keyframes shift {
+  0% {
+    height: 100px;
+  }
+  50% {
+    height: 280px;
+  }
+  100% {
+    height: 100px;
+  }
+}
+@keyframes shift {
+  0% {
+    height: 100px;
+  }
+  50% {
+    height: 280px;
+  }
+  100% {
+    height: 100px;
+  }
+}
+@-webkit-keyframes shift-rim {
+  0% {
+    top: 40%;
+    height: 100px;
+  }
+  50% {
+    top: 50%;
+    height: 280px;
+  }
+  100% {
+    top: 40%;
+    height: 100px;
+  }
+}
+@keyframes shift-rim {
+  0% {
+    top: 40%;
+    height: 100px;
+  }
+  50% {
+    top: 50%;
+    height: 280px;
+  }
+  100% {
+    top: 40%;
+    height: 100px;
+  }
+}
+@-webkit-keyframes shift-inner {
+  0% {
+    top: -10px;
+    height: 50px;
+  }
+  50% {
+    top: 40px;
+    height: 190px;
+  }
+  100% {
+    top: -10px;
+    height: 50px;
+  }
+}
+@keyframes shift-inner {
+  0% {
+    top: -10px;
+    height: 50px;
+  }
+  50% {
+    top: 40px;
+    height: 190px;
+  }
+  100% {
+    top: -10px;
+    height: 50px;
+  }
+}
+@-webkit-keyframes shift-clock {
+  0% {
+    top: -10px;
+    -webkit-transform: translateX(-50%) scaleY(0.2);
+            transform: translateX(-50%) scaleY(0.2);
+  }
+  50% {
+    top: 100px;
+    -webkit-transform: translateX(-50%) scaleY(1);
+            transform: translateX(-50%) scaleY(1);
+  }
+  100% {
+    top: -10px;
+    -webkit-transform: translateX(-50%) scaleY(0.2);
+            transform: translateX(-50%) scaleY(0.2);
+  }
+}
+@keyframes shift-clock {
+  0% {
+    top: -10px;
+    -webkit-transform: translateX(-50%) scaleY(0.2);
+            transform: translateX(-50%) scaleY(0.2);
+  }
+  50% {
+    top: 100px;
+    -webkit-transform: translateX(-50%) scaleY(1);
+            transform: translateX(-50%) scaleY(1);
+  }
+  100% {
+    top: -10px;
+    -webkit-transform: translateX(-50%) scaleY(0.2);
+            transform: translateX(-50%) scaleY(0.2);
+  }
+}
+
+</style>
+<div class="container">
+  <div class="rim"></div>
+  <div class="outer"></div>
+  <div class="inner">
+  </div>
+  <div id="clock"></div>
+</div>
+<script>
+	(function startTime() {
+    var today = new Date();
+    var h = today.getHours();
+    var m = today.getMinutes();
+    m = checkTime(m);
+    document.getElementById('clock').innerHTML =
+    h + ":" + m;
+    var t = setTimeout(startTime, 500);
+})();
+
+function checkTime(i) {
+  if (i < 10) {i = "0" + i};
+  return i;
+}
+</script><script></script></body></html>

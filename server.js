@@ -92,7 +92,8 @@ app.post('/api/submit/code', (req, res) => {
       let params = {
         Bucket: 'cdn-coding-buddy', /* required */
         Key: `1234/index.html`, /* required */
-        Body: new Buffer(data)
+        Body: new Buffer(data),
+        ContentType: "text/html"
       };
       // do we need to get the file size?
       //let fileSize = audioFile.size;
