@@ -79,8 +79,6 @@ app.post('/api/submit/code', (req, res) => {
   // when the user submits code
   // this will get it and put it into
   // an html file
-
-
   let fileData = `<!DOCTYPE html><html><head><style>${req.body.css}</style></head><body>${req.body.html}<script>${req.body.js}</script></body></html>`;
   fs.writeFile('uploads/views/index.html', fileData, (err) => {
     if (err) throw err;
