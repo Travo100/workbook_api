@@ -80,32 +80,23 @@ app.post('/api/submit/code', (req, res) => {
   // this will get it and put it into
   // an html file
   let fileData = `<!DOCTYPE html><html><head><style>${req.body.css}</style></head><body>${req.body.html}<script>${req.body.js}</script></body></html>`;
-  fs.writeFile('uploads/views/index.html', fileData, (err) => {
-    if (err) throw err;
-    let convertedFilePath = path.join(__dirname, `/uploads/views/index.html`);
-    fs.readFile(convertedFilePath, function(err, data){
-      if(err) {
-        return res.status(400).send(err);
-      }
-      let params = {
-        Bucket: 'cdn-coding-buddy', /* required */
-        Key: `1234/index.html`, /* required */
-        Body: new Buffer(data),
-        ContentType: "text/html"
-      };
-      // do we need to get the file size?
-      //let fileSize = audioFile.size;
-      s3.putObject(params, (err, data) => {
-        if (err)  {
-          return res.status(400).json(err);
-        } else {
-          res.json({
-            message: "File converted and uploaded to S3",
-            s3Data: data
-          });
-        }
+  let params = {
+    Bucket: 'cdn-coding-buddy', /* required */
+    Key: `1234/index.html`, /* required */
+    Body: new Buffer(fileData),
+    ContentType: "text/html"
+  };
+  // do we need to get the file size?
+  //let fileSize = audioFile.size;
+  s3.putObject(params, (err, data) => {
+    if (err)  {
+      return res.status(400).json(err);
+    } else {
+      res.json({
+        message: "File converted and uploaded to S3",
+        s3Data: data
       });
-    });
+    }
   });
 });
 
