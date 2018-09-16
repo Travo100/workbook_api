@@ -29,13 +29,11 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static('uploads/'));
-
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/appDB', { useNewUrlParser: true });
 
 // Init the express-jwt middleware
 const isAuthenticated = exjwt({
-  secret: 'all sorts of code up in here'
+  secret: process.env.SECRET_KEY
 });
 
 
@@ -46,7 +44,7 @@ app.post('/api/login', (req, res) => {
   }).then(user => {
     user.verifyPassword(req.body.password, (err, isMatch) => {
       if(isMatch && !err) {
-        let token = jwt.sign({ id: user._id, email: user.email }, 'all sorts of code up in here', { expiresIn: 129600 }); // Sigining the token
+        let token = jwt.sign({ id: user._id, email: user.email }, process.env.SECRET_KEY, { expiresIn: 129600 }); // Sigining the token
         res.json({success: true, message: "Token Issued!", token: token, user: user});
       } else {
         res.status(401).json({success: false, message: "Authentication failed. Wrong password."});
@@ -82,7 +80,7 @@ app.post('/api/submit/code', (req, res) => {
   let fileData = `<!DOCTYPE html><html><head><style>${req.body.css}</style></head><body>${req.body.html}<script>${req.body.js}</script></body></html>`;
   let params = {
     Bucket: 'cdn-coding-buddy', /* required */
-    Key: `1234/index.html`, /* required */
+    Key: `4321/index.html`, /* required */
     Body: new Buffer(fileData),
     ContentType: "text/html"
   };
@@ -112,7 +110,7 @@ app.post('/api/check', (req, res) => {
     }
   }).catch(err => {
     res.status(400).send(err);
-  })
+  });
 });
 
 app.get('/views/:pagename', (req, res) => {
@@ -132,11 +130,6 @@ app.post('/api/lesson', (req, res) => {
     .then(data => res.json(data))
     .catch(err => res.status(400).send(err));
 });
-
-// Serve up static assets (usually on heroku)
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"));
-}
 
 
 app.get('/', isAuthenticated /* Using the express jwt MW here */, (req, res) => {
