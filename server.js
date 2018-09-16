@@ -100,6 +100,21 @@ app.post('/api/submit/code', (req, res) => {
   });
 });
 
+app.post('/api/check', (req, res) => {
+  db.Lesson.findOne({
+    language: req.body.language,
+    lessonNumber: req.body.lessonNumber
+  }).then(lessonDb => {
+    if(req.body.code.includes(lessonDb.answer)){
+      res.json(true);
+    } else {
+      res.status(404).json(false);
+    }
+  }).catch(err => {
+    res.status(400).send(err);
+  })
+});
+
 app.get('/views/:pagename', (req, res) => {
   res.sendFile(path.join(__dirname, 'uploads/views/index.html'))
 });
