@@ -22,10 +22,20 @@ let UserSchema = new Schema({
     type: String,
     required: true
   },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  files: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "File"
+    }
+  ]
 });
 
 // Execute before each user.save() call

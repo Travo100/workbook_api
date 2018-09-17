@@ -1,4 +1,5 @@
 module.exports = {
   User: require('./User'),
-  Lesson: require('./Lesson')
+  Lesson: require('./Lesson'),
+  File: require('./File')
 };

@@ -29,7 +29,7 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/appDB', { useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/codingBuddyDB', { useNewUrlParser: true });
 
 // Init the express-jwt middleware
 const isAuthenticated = exjwt({
@@ -80,18 +80,41 @@ app.post('/api/submit/code', (req, res) => {
   let fileData = `<!DOCTYPE html><html><head><style>${req.body.css}</style></head><body>${req.body.html}<script>${req.body.js}</script></body></html>`;
   let params = {
     Bucket: 'cdn-coding-buddy', /* required */
-    Key: `4321/index.html`, /* required */
+    Key: `${req.body.userId}/${req.body.language}/${req.body.lessonNumber}/index.html`, /* required */
     Body: new Buffer(fileData),
-    ContentType: "text/html"
+    ContentType: "text/html",
+    ACL: 'public-read'
   };
-  // do we need to get the file size?
-  //let fileSize = audioFile.size;
   s3.putObject(params, (err, data) => {
     if (err)  {
       return res.status(400).json(err);
     } else {
+      db.File
+        .find({fileUrl: `${req.body.userId}/${req.body.language}/${req.body.lessonNumber}/index.html`})
+        .then(dbFile => {
+          if(!dbFile.length) {
+            db.File.create({
+              lessonNumber: req.body.lessonNumber,
+              language: req.body.language,
+              fileUrl: `${req.body.userId}/${req.body.language}/${req.body.lessonNumber}/index.html`
+            })
+              .then(dbFile => {
+                return db.User.findByIdAndUpdate(req.body.userId, { $push: { files: dbFile._id } }, { new: true });
+              })
+              .then(dbUser => {
+                console.log(dbUser);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          } else {
+            console.log("File already created");
+          }
+        });
+
+
       res.json({
-        message: "File converted and uploaded to S3",
+        message: "File added to user",
         s3Data: data
       });
     }
