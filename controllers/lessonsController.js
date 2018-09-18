@@ -1,34 +1,41 @@
 const db = require("../models");
-// Defining methods for the filesController
+// Defining methods for the lessonsController
 module.exports = {
   findAll: (req, res) => {
-    db.File
+    db.Lesson
       .find(req.query)
-      .sort({ date: -1 })
+      .sort({ createdAt: -1 })
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
   findById: (req, res) => {
-    db.File
+    db.Lesson
       .findById(req.params.id)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
+  findByLanguageAndOrderByLessonNumber: (req, res) => {
+    db.Lesson
+      .find({language: req.params.language})
+      .sort({lessonNumber: 1})
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  },
   create: (req, res) => {
-    db.File
+    db.Lesson
       .create(req.body)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
   update: (req, res)=> {
-    db.File
+    db.Lesson
       .findByIdAndUpdate(req.params.id, req.body)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
   remove: (req, res) => {
-    db.File
-      .findById({ _id: req.params.id })
+    db.Lesson
+      .findById(req.params.id)
       .then(dbModel => dbModel.remove())
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));

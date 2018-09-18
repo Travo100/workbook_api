@@ -10,6 +10,7 @@ const morgan = require('morgan'); // used to see requests
 const AWS = require('aws-sdk');
 const app = express();
 const db = require('./models');
+const routes = require("./routes");
 const PORT = process.env.PORT || 3001;
 
 const s3 = new AWS.S3();
@@ -121,7 +122,7 @@ app.post('/api/submit/code', (req, res) => {
   });
 });
 
-app.post('/api/check', (req, res) => {
+app.post('/api/check/code', (req, res) => {
   db.Lesson.findOne({
     language: req.body.language,
     lessonNumber: req.body.lessonNumber
@@ -136,23 +137,8 @@ app.post('/api/check', (req, res) => {
   });
 });
 
-app.get('/views/:pagename', (req, res) => {
-  res.sendFile(path.join(__dirname, 'uploads/views/index.html'))
-});
-
-app.get('/api/lesson', (req, res) => {
-  db.Lesson
-    .find({})
-    .then(data => res.json(data))
-    .catch(err => res.status(400).send(err));
-});
-
-app.post('/api/lesson', (req, res) => {
-  db.Lesson
-    .create(req.body)
-    .then(data => res.json(data))
-    .catch(err => res.status(400).send(err));
-});
+// Add routes, both API and view
+app.use(routes);
 
 
 app.get('/', isAuthenticated /* Using the express jwt MW here */, (req, res) => {
@@ -160,7 +146,7 @@ app.get('/', isAuthenticated /* Using the express jwt MW here */, (req, res) => 
 });
 
 // Error handling
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') { // Send the error rather than to show it on the console
     res.status(401).send(err);
   }
@@ -171,10 +157,10 @@ app.use(function (err, req, res, next) {
 
 // Send every request to the React app
 // Define any API routes before this runs
-app.get("*", function(req, res) {
+app.get("*", (req, res) => {
   res.status(404).send("404 not found")
 });
 
-app.listen(PORT, function() {
+app.listen(PORT, () => {
   console.log(`🌎 ==> Server now on port ${PORT}!`);
 });
