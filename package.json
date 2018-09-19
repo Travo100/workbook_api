@@ -4,11 +4,10 @@
   "description": "Coding buddy api",
   "main": "server.js",
   "scripts": {
-    "nodemon": "nodemon server.js",
-    "start": "node server.js",
-    "server": "node server.js"
+    "server": "node server.js",
+    "start": "node server.js"
   },
-  "author": "",
+  "author": "Travis Thompson",
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^3.6.1",
