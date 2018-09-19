@@ -18,4 +18,8 @@ router
   .route("/language/:language")
   .get(lessonsController.findByLanguageAndOrderByLessonNumber);
 
+router
+  .route("/single/:language/:lessonNumber")
+  .get(lessonsController.findOneLessonByLanguageAndLessonNumber);
+
 module.exports = router;

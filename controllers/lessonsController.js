@@ -14,6 +14,12 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
+  findOneLessonByLanguageAndLessonNumber: (req, res) => {
+    db.Lesson
+      .findOne({lessonNumber: req.params.lessonNumber, language: req.params.language})
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  },
   findByLanguageAndOrderByLessonNumber: (req, res) => {
     db.Lesson
       .find({language: req.params.language})
