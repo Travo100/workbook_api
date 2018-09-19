@@ -41,7 +41,7 @@ app.post('/api/login', (req, res) => {
   }).then(user => {
     user.verifyPassword(req.body.password, (err, isMatch) => {
       if(isMatch && !err) {
-        let token = jwt.sign({ id: user._id, email: user.email }, process.env.SECRET_KEY, { expiresIn: 129600 }); // Sigining the token
+        let token = jwt.sign({ id: user._id, email: user.email }, process.env.SECRET_KEY, { expiresIn: 129600 }); // Signing the token
         res.json({success: true, message: "Token Issued!", token: token, user: user});
       } else {
         res.status(401).json({success: false, message: "Authentication failed. Wrong password."});
@@ -72,7 +72,6 @@ app.get('/api/user/:id', isAuthenticated, (req, res) => {
 
 // Add routes, both API and view
 app.use(routes);
-
 
 app.get('/', isAuthenticated /* Using the express jwt MW here */, (req, res) => {
   res.send('You are authenticated'); //Sending some response when authenticated
