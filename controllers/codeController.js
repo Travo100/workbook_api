@@ -2,13 +2,15 @@ const db = require('../models');
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
 const parse5 = require('parse5');
+const filesController = require('../controllers/filesController');
 // Defining methods for the lessonsController
 module.exports = {
   submit: (req, res) => {
     // when the user submits code
     // this will get it and put it into
     // an html file
-    let fileData = `<!DOCTYPE html><html><head><style>${req.body.css}</style></head><body>${req.body.html}<script>${req.body.js}</script></body></html>`;
+    //let fileData = `<!DOCTYPE html><html><head><style>${req.body.css}</style></head><body>${req.body.html}<script>${req.body.js}</script></body></html>`;
+    let fileData = req.body.html;
     let params = {
       Bucket: 'cdn-coding-buddy', /* required */
       Key: `${req.body.userId}/${req.body.language}/${req.body.lessonNumber}/index.html`, /* required */
@@ -29,7 +31,8 @@ module.exports = {
               db.File.create({
                 lessonNumber: req.body.lessonNumber,
                 language: req.body.language,
-                fileUrl: `${req.body.userId}/${req.body.language}/${req.body.lessonNumber}/index.html`
+                fileUrl: `${req.body.userId}/${req.body.language}/${req.body.lessonNumber}/index.html`,
+                content: fileData
               })
               .then(dbFile => {
                 return db.User.findByIdAndUpdate(req.body.userId, { $push: { files: dbFile._id } }, { new: true });
@@ -45,6 +48,8 @@ module.exports = {
                 return res.status(400).json(err);
               });
             } else {
+              filesController
+                .updateByFileUrl(`${req.body.userId}/${req.body.language}/${req.body.lessonNumber}/index.html`, fileData);
               return res.json({
                 message: "File updated to user",
                 s3Data: data,
@@ -70,13 +75,13 @@ module.exports = {
 
 
         if(dataBaseAnswerCode.includes("{*}")) {
-          comparisonType = "tag-comparsion";
+          comparisonType = "tag-match";
         } else {
           comparisonType = "exact-match";
         }
 
         switch(comparisonType) {
-          case "tag-comparsion":
+          case "tag-match":
             let dataBaseDocument = parse5.parse(dataBaseAnswerCode);
             let dataBaseBody = dataBaseDocument.childNodes[1].childNodes[1];
 

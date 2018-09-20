@@ -17,6 +17,10 @@ let FileSchema = new Schema({
     required: true,
     trim: true
   },
+  content: {
+    type: String,
+    trim: true
+  },
   complete: {
     type: Boolean,
     default: false

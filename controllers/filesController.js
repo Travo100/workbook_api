@@ -26,6 +26,16 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
+  updateByFileUrl: (fileUrl, content)=> {
+    db.File
+      .findOneAndUpdate({fileUrl: fileUrl}, {content: content}, {new: true})
+  },
+  findOneFileByUrl: (req, res) => {
+    db.File
+      .findOne({fileUrl: req.body.fileUrl})
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  },
   remove: (req, res) => {
     db.File
       .findById({ _id: req.params.id })
