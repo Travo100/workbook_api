@@ -61,7 +61,11 @@ module.exports = {
     })
       .lean()
       .then(lessonDb => {
-      if(req.body.code.includes(lessonDb.answer)){
+        const userAnswerCode = req.body.code.replace(/\s+/g, '').trim();
+        const dataBaseAnswerCode = lessonDb.answer.replace(/\s+/g, '').trim();
+        console.log(userAnswerCode); // logs: "this is a test"
+        console.log(dataBaseAnswerCode);
+      if(userAnswerCode.includes(dataBaseAnswerCode)){
         res.json(true);
       } else {
         res.status(404).json(false);
