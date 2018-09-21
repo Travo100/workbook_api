@@ -29,6 +29,8 @@ module.exports = {
   updateByFileUrl: (fileUrl, content)=> {
     db.File
       .findOneAndUpdate({fileUrl: fileUrl}, {content: content}, {new: true})
+      .then(dbModel => console.log(dbModel))
+      .catch(err => console.log(err));
   },
   findOneFileByUrl: (req, res) => {
     db.File
