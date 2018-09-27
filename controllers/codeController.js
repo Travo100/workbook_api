@@ -3,6 +3,7 @@ const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
 const parse5 = require('parse5');
 const filesController = require('../controllers/filesController');
+const minify = require('html-minifier').minify;
 // Defining methods for the lessonsController
 module.exports = {
   submit: (req, res) => {
@@ -67,47 +68,32 @@ module.exports = {
     })
       .lean()
       .then(lessonDb => {
-        const userAnswerCode = req.body.code.replace(/\s+/g, '').trim();
-        const dataBaseAnswerCode = lessonDb.answer.replace(/\s+/g, '').trim();
-        // console.log(userAnswerCode); // logs: "this is a test"
-        // console.log(dataBaseAnswerCode);
-        let comparisonType = "";
+        const userAnswerCode = minify(req.body.code, {
+          collapseWhitespace: true,
+          removeTagWhitespace: true,
+          collapseInlineTagWhitespace: true
+        });
+        const dataBaseAnswerCode = minify(lessonDb.answer, {
+          collapseWhitespace: true,
+          removeTagWhitespace: true,
+          collapseInlineTagWhitespace: true
+        });
 
+        let dataBaseDocument = parse5.parse(dataBaseAnswerCode);
+        let dataBaseBody = dataBaseDocument.childNodes[1].childNodes[1];
 
-        if(dataBaseAnswerCode.includes("{*}")) {
-          comparisonType = "tag-match";
-        } else {
-          comparisonType = "exact-match";
-        }
-
-        switch(comparisonType) {
-          case "tag-match":
-            let dataBaseDocument = parse5.parse(dataBaseAnswerCode);
-            let dataBaseBody = dataBaseDocument.childNodes[1].childNodes[1];
-
-            let userAnswerCodeDocument = parse5.parse(userAnswerCode);
-            let userAnswerBody = userAnswerCodeDocument.childNodes[1].childNodes[1];
-            _checkBodyTags(dataBaseBody.childNodes, userAnswerBody.childNodes, (boolean) => {
-              if (boolean) {
-                res.json(true);
-              } else {
-                res.status(404).json(false);
-              }
-            });
-            break;
-          case "exact-match":
-            if (userAnswerCode.includes(dataBaseAnswerCode)) {
-              res.json(true);
-            } else {
-              res.status(404).json(false);
-            }
-            break;
-          default:
-            res.status(404).send("No match given");
-        }
+        let userAnswerCodeDocument = parse5.parse(userAnswerCode);
+        let userAnswerBody = userAnswerCodeDocument.childNodes[1].childNodes[1];
+        _checkBodyTags(dataBaseBody.childNodes, userAnswerBody.childNodes, (boolean) => {
+          if (boolean) {
+            return res.json(true);
+          } else {
+            return res.status(404).json(false);
+          }
+        });
 
     }).catch(err => {
-      res.status(400).send(err);
+      return res.status(400).send(err);
     });
   }
 };
