@@ -79,12 +79,12 @@ module.exports = {
           collapseInlineTagWhitespace: true
         });
 
-        let dataBaseDocument = parse5.parse(dataBaseAnswerCode);
-        let dataBaseBody = dataBaseDocument.childNodes[1].childNodes[1];
+        let dataBaseDocument = parse5.parseFragment(dataBaseAnswerCode);
+        let dataBaseBody = dataBaseDocument.childNodes;
 
-        let userAnswerCodeDocument = parse5.parse(userAnswerCode);
-        let userAnswerBody = userAnswerCodeDocument.childNodes[1].childNodes[1];
-        _checkBodyTags(dataBaseBody.childNodes, userAnswerBody.childNodes, (boolean) => {
+        let userAnswerCodeDocument = parse5.parseFragment(userAnswerCode);
+        let userAnswerBody = userAnswerCodeDocument.childNodes;
+        _checkBodyTags(dataBaseBody, userAnswerBody, (boolean) => {
           if (boolean) {
             return res.json(true);
           } else {
