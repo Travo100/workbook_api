@@ -25,7 +25,7 @@ let LessonSchema = new Schema({
   rawContent: {
     type: Object,
     required: true,
-    trim: true
+    minimize: false
   },
   answer: {
     type: String,

@@ -28,8 +28,12 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
   create: (req, res) => {
+    let lessonContent = req.body;
+    if(!lessonContent.rawContent.entityMap || JSON.stringify(lessonContent.rawContent.entityMap === "{}")) {
+      lessonContent.rawContent.entityMap = "";
+    }
     db.Lesson
-      .create(req.body)
+      .create(lessonContent)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
